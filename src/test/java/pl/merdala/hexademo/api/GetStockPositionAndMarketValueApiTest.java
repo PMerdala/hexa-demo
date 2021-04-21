@@ -33,7 +33,7 @@ public class GetStockPositionAndMarketValueApiTest {
     @Autowired
     private WebTestClient client;
 
-    private static Faker faker = Faker.instance();
+    private final static Faker faker = Faker.instance();
 
     @MockBean
     private GetStockPositionService getStockPositionService;
