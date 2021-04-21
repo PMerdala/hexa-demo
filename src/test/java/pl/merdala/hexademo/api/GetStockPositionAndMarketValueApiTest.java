@@ -19,6 +19,8 @@ import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 
@@ -44,7 +46,8 @@ public class GetStockPositionAndMarketValueApiTest {
     void get() {
         StockPosition fakeStockPosition = getFakeStockPosition(symbol);
         when(getStockPositionService.get(user, symbol)).thenReturn(Mono.just(fakeStockPosition));
-        BigDecimal fakeMarketPrice = BigDecimal.valueOf(faker.number().randomDouble(4, 0, 1_000_000));
+        BigDecimal fakeMarketPrice = BigDecimal.valueOf(faker.number()
+                .randomDouble(4, 0, 1_000_000));
         when(getStockMarketValueService.get(symbol, fakeStockPosition.getQuantity())).thenReturn(Mono.just((fakeMarketPrice)));
         makeGetRequest(symbol)
                 //assert
@@ -81,11 +84,23 @@ public class GetStockPositionAndMarketValueApiTest {
                 .expectStatus().isUnauthorized();
     }
 
+    @Test
+    @WithMockUser(user)
+    void emptyPosition() {
+        when(getStockPositionService.get(user, symbol)).thenReturn(Mono.empty());
+        BigDecimal fakeMarketPrice = BigDecimal.valueOf(faker.number()
+                .randomDouble(4, 0, 1_000_000));
+        when(getStockMarketValueService.get(eq(symbol), any(BigDecimal.class))).thenReturn(Mono.just((fakeMarketPrice)));
+        makeGetRequest(symbol)
+                //assert
+                .expectStatus().isOk()
+                .expectBody(Void.class);
+    }
+
     private StockPosition getFakeStockPosition(String symbol) {
-        StockPosition fakeStockPosition = new StockPosition(symbol,
+        return new StockPosition(symbol,
                 BigDecimal.valueOf(faker.number().randomDouble(2, 0, 1_000_000)),
                 faker.currency().code(),
                 BigDecimal.valueOf(faker.number().randomDouble(4, 0, 1_000_000)));
-        return fakeStockPosition;
     }
 }
