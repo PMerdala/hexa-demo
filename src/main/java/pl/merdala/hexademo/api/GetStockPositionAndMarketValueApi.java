@@ -27,12 +27,12 @@ public class GetStockPositionAndMarketValueApi {
             @PathVariable("symbol") String symbol) {
         return principalMono
                 .flatMap(principal -> getStockPositionService.get(principal.getName(), symbol))
-                .zipWhen(stockPosition -> getStockMarketValueService.get(symbol, stockPosition.getQuantity()))
-                .map(stockPositionAndMarketValue -> new GetStockPositionAndMarketValueApitResponseDto(
-                        symbol,
-                        stockPositionAndMarketValue.getT1().getQuantity(),
-                        stockPositionAndMarketValue.getT1().getCurrencyCode(),
-                        stockPositionAndMarketValue.getT1().getCost()
-                        , stockPositionAndMarketValue.getT2()));
+                .zipWhen(stockPosition -> getStockMarketValueService.get(symbol, stockPosition.getQuantity()),
+                        ((stockPosition, marketValue) -> new GetStockPositionAndMarketValueApitResponseDto(
+                                symbol,
+                                stockPosition.getQuantity(),
+                                stockPosition.getCurrencyCode(),
+                                stockPosition.getCost()
+                                , marketValue)));
     }
 }
