@@ -1,6 +1,5 @@
 package pl.merdala.hexademo.api;
 
-import com.github.javafaker.Faker;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import pl.merdala.hexademo.domain.DomainModelFaker;
 import pl.merdala.hexademo.domain.service.GetStockMarketValueService;
 import pl.merdala.hexademo.domain.service.GetStockPositionService;
 import pl.merdala.hexademo.domain.service.StockPosition;
@@ -33,8 +33,6 @@ public class GetStockPositionAndMarketValueApiTest {
     @Autowired
     private WebTestClient client;
 
-    private final static Faker faker = Faker.instance();
-
     @MockBean
     private GetStockPositionService getStockPositionService;
 
@@ -44,9 +42,9 @@ public class GetStockPositionAndMarketValueApiTest {
     @Test
     @WithMockUser(user)
     void get() {
-        StockPosition fakeStockPosition = getFakeStockPosition(symbol);
+        StockPosition fakeStockPosition = DomainModelFaker.fakeStockPosition(user, symbol);
         when(getStockPositionService.get(user, symbol)).thenReturn(Mono.just(fakeStockPosition));
-        BigDecimal fakeMarketPrice = BigDecimal.valueOf(faker.number()
+        BigDecimal fakeMarketPrice = BigDecimal.valueOf(DomainModelFaker.faker.number()
                 .randomDouble(4, 0, 1_000_000));
         when(getStockMarketValueService.get(symbol, fakeStockPosition.getQuantity())).thenReturn(Mono.just((fakeMarketPrice)));
         makeGetRequest(symbol)
@@ -88,19 +86,12 @@ public class GetStockPositionAndMarketValueApiTest {
     @WithMockUser(user)
     void emptyPosition() {
         when(getStockPositionService.get(user, symbol)).thenReturn(Mono.empty());
-        BigDecimal fakeMarketPrice = BigDecimal.valueOf(faker.number()
+        BigDecimal fakeMarketPrice = BigDecimal.valueOf(DomainModelFaker.faker.number()
                 .randomDouble(4, 0, 1_000_000));
         when(getStockMarketValueService.get(eq(symbol), any(BigDecimal.class))).thenReturn(Mono.just((fakeMarketPrice)));
         makeGetRequest(symbol)
                 //assert
                 .expectStatus().isOk()
                 .expectBody(Void.class);
-    }
-
-    private StockPosition getFakeStockPosition(String symbol) {
-        return new StockPosition(symbol,
-                BigDecimal.valueOf(faker.number().randomDouble(2, 0, 1_000_000)),
-                faker.currency().code(),
-                BigDecimal.valueOf(faker.number().randomDouble(4, 0, 1_000_000)));
     }
 }

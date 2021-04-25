@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "alphavantage.apiKey",
+      "type": "java.lang.String",
+      "description": "Description for alphavantage.apiKey."
+    }
+  ] }
