@@ -27,9 +27,11 @@ public class AlphaVantageGetStockMarketPrice implements GetStockMarketPricePort 
         ).retrieve()
                 .bodyToMono(AlphaVantageTimeSeriesDailyJson.class)
                 .doOnNext(json->log.debug(json.toString()))
-                .map(AlphaVantageTimeSeriesDailyJson::getDaily)
-                .map(this::getLatestClosingPrice)
-                .map(BigDecimal::new);
+                .map(this::getClosingPrice);
+    }
+
+    private BigDecimal getClosingPrice(AlphaVantageTimeSeriesDailyJson alphaVantageTimeSeriesDailyJson){
+        return  new BigDecimal(getLatestClosingPrice(alphaVantageTimeSeriesDailyJson.getDaily()));
     }
 
     private String getLatestClosingPrice(Map<String, AlphaVantageTimeSeriesDailyJsonDaily> daily) {
