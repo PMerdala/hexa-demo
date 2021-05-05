@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="pl.merdala.hexademo in hexa-demo" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+  <configuration default="false" name="Tags (!(Spring|E2E) )" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
     <module name="hexa-demo" />
     <extension name="coverage">
       <pattern>
@@ -21,7 +21,8 @@
     <option name="PACKAGE_NAME" value="pl.merdala.hexademo" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
-    <option name="TEST_OBJECT" value="package" />
+    <option name="TEST_OBJECT" value="tags" />
+    <tag value="!(Spring|E2E)" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

@@ -1,6 +1,7 @@
 package pl.merdala.hexademo.domain.service;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
@@ -11,6 +12,7 @@ import reactor.test.StepVerifier;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataMongoTest
+@Tag("Spring")
 class StockPositionsRepositoryIntegrationTest {
 
     @Autowired

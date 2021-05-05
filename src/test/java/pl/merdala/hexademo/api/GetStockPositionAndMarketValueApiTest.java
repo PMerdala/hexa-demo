@@ -1,6 +1,7 @@
 package pl.merdala.hexademo.api;
 
 import org.assertj.core.data.Offset;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -25,13 +26,15 @@ import static org.mockito.Mockito.when;
 
 
 @WebFluxTest
+@Tag("Spring")
 public class GetStockPositionAndMarketValueApiTest {
+
+    @Autowired
+    WebTestClient client;
+
 
     private final static String symbol = "aapl";
     private final static String user = "pawel";
-
-    @Autowired
-    private WebTestClient client;
 
     @MockBean
     private GetStockPositionService getStockPositionService;
@@ -63,12 +66,6 @@ public class GetStockPositionAndMarketValueApiTest {
                 ));
     }
 
-    private WebTestClient.ResponseSpec makeGetRequest(String symbol) {
-        return client.get().uri("/stock-position-market-value/" + symbol)
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange();
-    }
-
     @Test
     @WithAnonymousUser
     void anonymousGet() {
@@ -93,5 +90,10 @@ public class GetStockPositionAndMarketValueApiTest {
                 //assert
                 .expectStatus().isOk()
                 .expectBody(Void.class);
+    }
+    WebTestClient.ResponseSpec makeGetRequest(String symbol) {
+        return client.get().uri("/stock-position-market-value/" + symbol)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange();
     }
 }
